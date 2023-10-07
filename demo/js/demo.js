@@ -1,7 +1,9 @@
+/* eslint-disable linebreak-style */
 import React, { Component } from 'react';
 import { createRoot } from 'react-dom/client';
 import PropTypes from 'prop-types';
-import ReactPaginate from 'react-paginate';
+// import ReactPaginate from 'react-paginate';
+import ReactPaginate from '../../react_components';
 import styled from 'styled-components';
 import $ from 'jquery';
 
@@ -120,8 +122,19 @@ export class App extends Component {
     });
   };
 
+  handleOptionsChange = (data) => {
+    console.log('onOptionsChange', data.target.value);
+    let selected = data.target.value;
+    let offset = Math.ceil(selected * this.props.perPage);
+    this.setState({ offset: offset }, () => {
+      this.loadCommentsFromServer();
+    });
+  };
+
   render() {
+    //const options = ['One', 'Two', 'Three', 'Four', 'Five'];
     const currentPage = Math.round(this.state.offset / this.props.perPage);
+    console.log(currentPage, 'CurrentPage');
     return (
       <div className="commentBox">
         <MyPaginate
@@ -157,6 +170,14 @@ export class App extends Component {
             }
             hrefAllControls
             forcePage={currentPage}
+            renderCustomPageView={
+              <select className='mx-3' onChange={this.handleOptionsChange} value={currentPage }>
+                <option value={0}>Select Page</option>
+                {[...Array(20)].map((x, index) => (
+                  <option key={index} value={index}>{index + 1}</option>
+                ))}
+              </select>
+            }
             onClick={(clickEvent) => {
               console.log('onClick', clickEvent);
               // Return false to prevent standard page change,

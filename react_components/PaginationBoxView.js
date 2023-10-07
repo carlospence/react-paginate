@@ -1,5 +1,5 @@
+/* eslint-disable linebreak-style */
 'use strict';
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import PageView from './PageView';
@@ -52,6 +52,7 @@ export default class PaginationBoxView extends Component {
     eventListener: PropTypes.string,
     renderOnZeroPageCount: PropTypes.func,
     selectedPageRel: PropTypes.string,
+    renderCustomPageView: PropTypes.node,
   };
 
   static defaultProps = {
@@ -77,11 +78,12 @@ export default class PaginationBoxView extends Component {
     renderOnZeroPageCount: undefined,
     selectedPageRel: 'canonical',
     hrefAllControls: false,
+    renderCustomPageView: undefined,
   };
 
   constructor(props) {
     super(props);
-
+    this.paginationRef = React.createRef();
     if (props.initialPage !== undefined && props.forcePage !== undefined) {
       console.warn(
         `(react-paginate): Both initialPage (${props.initialPage}) and forcePage (${props.forcePage}) props are provided, which is discouraged.` +
@@ -525,6 +527,13 @@ export default class PaginationBoxView extends Component {
   };
 
   render() {
+
+    const { renderCustomPageView } = this.props;
+    // if (renderCustomPageView !== undefined){
+    //   return renderCustomPageView;
+    // }
+
+   
     const { renderOnZeroPageCount } = this.props;
     if (this.props.pageCount === 0 && renderOnZeroPageCount !== undefined) {
       return renderOnZeroPageCount
@@ -573,6 +582,7 @@ export default class PaginationBoxView extends Component {
 
     return (
       <ul
+        ref={this.paginationRef}
         className={className || containerClassName}
         role="navigation"
         aria-label="Pagination"
@@ -593,7 +603,7 @@ export default class PaginationBoxView extends Component {
           </a>
         </li>
 
-        {this.pagination()}
+        {renderCustomPageView !== undefined ? renderCustomPageView :this.pagination()}
 
         <li className={nextClasses}>
           <a
